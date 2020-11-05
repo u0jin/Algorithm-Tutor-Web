@@ -1,0 +1,133 @@
+<!-- 메인 홈화면 만들기 (index와 나중에 바꿔도 되는데 일단 진행)-->
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>제출</title>
+  <link rel="stylesheet" href="css/submit.css" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./template/bs/codeup.css" type="text/css">
+</head>
+<body> 
+
+<header class="header clearfix">
+    <a class="navbar-brand font-weight-bold" href="/problem" >  problem </a>
+</header>
+
+
+<main role="main">
+    <div class="container mt-3">
+        
+        <form action="submit_src" method="post">
+
+            <div class="text-center">
+            Problem <span class=blue><b>1</b></span>
+            <input id=problem_id type='hidden' value='1' name="id" ><br>
+            
+            <span id="language_span">Language:
+            
+            <select id="language" name="language" onChange="reloadtemplate($(this).val());" >
+            <option value=0 selected>C</option><option value=1 >C++</option><option value=3 >Java</option><option value=6 >Python</option></select>
+            
+            <br>
+            </span>
+            
+            
+              <button id='fplus' class='btn btn-primary btn-sm'>글자 크게+</button>
+              <button id='fminus' class='btn btn-warning btn-sm'>글자 작게-</button>
+            
+                <div class="col-12 col-sm-12 mx-auto">
+                    <div style="height:600px" id="source">
+                    <textarea name="content" cols="40" rows="8" ></textarea>
+
+                    <input type=hidden id="hide_source" name="source" value="" />
+                    </div>
+                </div>
+
+            <br>
+            <input type="submit" value="제출">
+
+            </form>
+    </div>
+</main>
+<script>
+
+function do_submit(){
+	if(typeof(editor) != "undefined"){ 
+		$("#hide_source").val(editor.getValue());
+	}
+	var mark="problem_id";
+	var problem_id=document.getElementById(mark);
+	if(mark=='problem_id')
+		problem_id.value='1';
+	else
+		problem_id.value='';
+	document.getElementById("frmSolution").target="_self";
+	document.getElementById("frmSolution").submit();
+}
+</script>
+
+<script>
+	document.getElementById("source").style.fontSize='1.0rem';
+    ace.require("ace/ext/language_tools");
+	var editor = ace.edit("source");
+	var theme = 'chrome';
+	editor.setTheme('ace/theme/'+theme);
+	switchLang(1);
+	editor.setOptions({
+		    enableBasicAutocompletion: true,
+		    enableSnippets: true,
+		    enableLiveAutocompletion: true,
+		    maxLines: 100,
+		    minLines: 15,
+		    autoScrollEditorIntoView: true
+	});
+	reloadtemplate($("#language").val()); 
+    </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.0/js/all.js"></script>
+	
+<footer class="container">
+
+    <h6 class="text-center">
+            kim youjin <a href='https://github.com/u0jin'>github</a><br />
+            (E-mail : ujin5826@skuniv.ac.kr)
+    </h6>
+    
+    
+</footer>
+
+<script>
+    var fsize = 1.0;
+    $("#fplus").click(()=>{
+        fsize = fsize + 0.1;
+        $("#source").css('fontSize', fsize+'rem');
+        return false;
+    });
+    
+    $("#fminus").click(()=>{
+            if (fsize >= 0.5)
+                    fsize = fsize - 0.1;
+        $("#source").css('fontSize', fsize+'rem');
+        return false;
+    });
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.6.1/clipboard.min.js"></script>
+
+    <script src="js/home.js"></script>
+    <script type="text/javascript"></script>
+
+  <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+</body>
+</html>
