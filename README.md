@@ -11,7 +11,7 @@
 3.웹 브라우저, 서버 - Node.js , express 사용 
 
 
-4. 프론트 - html, ejs , public (bootstrap,js,css ...etc ...)
+4.프론트 - html, ejs , public (bootstrap,js,css ...etc ...)
 
 
 알고리즘 채점 오픈소스와 WebRTC를 활용하여 알고리즘 튜터 웹사이트를 제작.
