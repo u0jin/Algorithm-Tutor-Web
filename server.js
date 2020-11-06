@@ -52,6 +52,7 @@ var router = require('./router/main')(app, fs); // bodyparser 설정 아래 부분에 �
 //server.use(express.static('public'));
 
 var io = socketIO.listen(server);
+
 io.sockets.on('connection', function(socket) {
 
   function log() {
@@ -106,4 +107,3 @@ io.sockets.on('connection', function(socket) {
   });
 
 });
-
