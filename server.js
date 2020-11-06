@@ -13,6 +13,9 @@ var session = require('express-session');
 var fs = require("fs");  // 파일 열기 위한 모듈
 //var engines = require('consolidate');
 
+
+
+
 //const charset =require('charset');
 app.set('socket.io', io);
 

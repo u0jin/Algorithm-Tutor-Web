@@ -12,7 +12,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="./template/bs/codeup.css" type="text/css">
 </head>
 <body> 
 
@@ -56,22 +55,6 @@
             </form>
     </div>
 </main>
-<script>
-
-function do_submit(){
-	if(typeof(editor) != "undefined"){ 
-		$("#hide_source").val(editor.getValue());
-	}
-	var mark="problem_id";
-	var problem_id=document.getElementById(mark);
-	if(mark=='problem_id')
-		problem_id.value='1';
-	else
-		problem_id.value='';
-	document.getElementById("frmSolution").target="_self";
-	document.getElementById("frmSolution").submit();
-}
-</script>
 
 <script>
 	document.getElementById("source").style.fontSize='1.0rem';
