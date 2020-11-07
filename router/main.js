@@ -28,6 +28,10 @@ module.exports = function(app, fs)
       // 컴파일 상태 확인
       var ret = { success: false, stdout: ''};
       var result = "FAIL";
+      /// 컴파일을 위한변수
+
+
+
       
 
       if (language == 0){   // C언어 일경우 
@@ -60,6 +64,7 @@ module.exports = function(app, fs)
       else if(language == 1){  // C++ 일경우
          console.log("c++언어");
 
+
          fs.writeFile('data/cpp_user_src.cpp', content, function(err){  // cpp소스파일 저장
             if(err){
               console.log(err)
@@ -71,8 +76,30 @@ module.exports = function(app, fs)
 
       //TODO : 나머지 언어는 추가하면서 수정할것
 
-      console.log(ret);
 
+      // 채점을 위한 테스트파일 읽어옴
+
+
+      // 채점 스크립트
+      const Judge_script = 'sudo ' + `${testerDir}/libjudger.so` + ' ' + '--max_cpu_time=1000' + ' ' +
+                        '--max_real_time= 2000' + ' ' + '--max_memory= 128 * 1024 * 1024' + ' ' +
+                        '--max_process_number= 200'  + ' ' + '--max_output_size= 10000'  + ' ' +
+                        `--exe_path="${dataDir}/c_user_src.o"` + ' ' + `--input_path="${testerDir}/case1.in"` + ' ' +
+                        `--output_path="${testerDir}/case1.out"` + ' ' + `--error_path="${testerDir}/error.txt"` + ' ' + '--uid=0' + ' ' +
+                        '--gid=0' + ' ' + '--seccomp_rule_name= c_cpp';
+
+      const JudeStdout = execSync(Judge_script).toString();
+      const JudgeStatus = JSON.parse(JudeStdout);
+
+      if(max_memory_usage < JudgeStatus.memory) {
+          max_memory_usage = JudgeStatus.memory;
+      }
+      if(max_time_usage < JudgeStatus.cpu_time) {
+          max_time_usage = JudgeStatus.cpu_time;
+      }
+
+      // TODO : 채점 잘돌아가면 결과값 어떻게 나타낼지 작성하기
+   
 
 
 
