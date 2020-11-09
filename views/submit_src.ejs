@@ -1,16 +1,121 @@
-<!DOCTYPE html> 
+<!-- 메인 홈화면 만들기 (index와 나중에 바꿔도 되는데 일단 진행)-->
+<!DOCTYPE html>
 <html>
-    <head>
-        <title><%= title %></title>
-    </head>
-    <body>
-        <h2><%= method %> result page</h2>
-        <p>content: <%= content %></p>
-        <p>language: <%= language %></p>
-        <p>result: <%= result %></p>
+
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>결과</title>
+  <link rel="stylesheet" href="css/submit.css" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" />
+</head>
+<body> 
+
+<header class="header clearfix">
+    <a class="navbar-brand font-weight-bold" href="/" >  home </a>
+</header>
 
 
-    </body>
+<main role="main">
+    <div class="container mt-3">
+        
+        <form action="submit_src" method="get">
+
+            <div class="text-center">
+            Problem <span class=blue><b>1</b></span>
+            
+                <div class="col-12 col-sm-12 mx-auto" id="result">
+                    <pre>
+                        
+                        
+                        
+
+
+
+
+
+
+
+
+                        <h1> 실행결과 = <%= result %></h1>
+                    </pre>
+
+                    <div style="height:200px" id="source">
+                    </div>
+                    <a class="navbar-brand font-weight-bold" href="/problem" > 문제 보기  </a> &ensp; &emsp; &emsp;
+                    <a class="navbar-brand font-weight-bold" href="/submit" > 코드 보기 </a>
+                </br> </br>
+            </br>
+
+
+                </div>
+
+            <br>
+
+
+            </form>
+    </div>
+</main>
+
+<script>
+	document.getElementById("source").style.fontSize='1.0rem';
+    ace.require("ace/ext/language_tools");
+	var editor = ace.edit("source");
+	var theme = 'chrome';
+	editor.setTheme('ace/theme/'+theme);
+	switchLang(1);
+	editor.setOptions({
+		    enableBasicAutocompletion: true,
+		    enableSnippets: true,
+		    enableLiveAutocompletion: true,
+		    maxLines: 100,
+		    minLines: 15,
+		    autoScrollEditorIntoView: true
+	});
+	reloadtemplate($("#language").val()); 
+    </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.0/js/all.js"></script>
+	
+<footer class="container">
+
+    <h6 class="text-center">
+            kim youjin <a href='https://github.com/u0jin'>github</a><br />
+            (E-mail : ujin5826@skuniv.ac.kr)
+    </h6>
+    
+    
+</footer>
+
+<script>
+    var fsize = 1.0;
+    $("#fplus").click(()=>{
+        fsize = fsize + 0.1;
+        $("#source").css('fontSize', fsize+'rem');
+        return false;
+    });
+    
+    $("#fminus").click(()=>{
+            if (fsize >= 0.5)
+                    fsize = fsize - 0.1;
+        $("#source").css('fontSize', fsize+'rem');
+        return false;
+    });
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.6.1/clipboard.min.js"></script>
+
+    <script src="js/home.js"></script>
+    <script type="text/javascript"></script>
+
+  <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+</body>
 </html>
-
-
