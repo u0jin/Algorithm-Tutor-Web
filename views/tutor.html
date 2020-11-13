@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Algorithm Tutor Web</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+  <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="resources/jquery.loadTemplate.min.js"></script>
+  <link rel="stylesheet" href="css/main.css" />
+  <style >
+    #btn_home {
+            position: relative;
+            top: -30%;
+            left: 670px;
+        }
+
+#upleft {
+            width: 100%;
+            height: 680px;
+            background-color: #263747;
+            color: #B2C0CC;
+        }    
+
+        
+        #container #footer {
+
+position: absolute;
+bottom: 0;
+width: 100%;
+height: 9%;
+background-color: #263747;
+color: #B2C0CC;
+
+}
+    </style>
+</head>
+
+<body>
+
+  <form id="upleft">
+
+  <header class="header clearfix">
+    <a class="navbar-brand font-weight-bold" href="/" id="btn_home">HOME</a> </a>
+
+        <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.8.js"></script>
+    <script src="/public/js/tutor.js"></script>
+
+  </header>
+
+  
+
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;<video id="localVideo" autoplay playsinline></video>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;<video id="remoteVideo" autoplay playsinline></video>
+
+  <div>
+    &nbsp;&nbsp;&nbsp;&nbsp;<button id="startButton">Start</button>
+    &nbsp;&nbsp;&nbsp;&nbsp;<button id="callButton">Call</button>
+    &nbsp;&nbsp;&nbsp;&nbsp;<button id="hangupButton">Hang Up</button>
+  </div>
+
+  </form>
+  <div id="container">
+    <div id="footer">
+
+        <h6 class="text-center">
+            </br>
+            kim youjin <a href='https://github.com/u0jin'>github</a>
+            (E-mail : ujin5826@skuniv.ac.kr)
+        </h6>
+
+
+    </div>
+</div>
+
+
+
+  <script>
+
+    navigator.getUserMedia = navigator.getUserMedia ||
+      navigator.webkitGetUserMedia ||
+      navigator.mozGetUserMedia ||
+      navigator.msGetUserMedia;
+
+    var video = document.querySelector('video');
+
+    if (navigator.getUserMedia) {
+      navigator.getUserMedia({ audio: true, video: { width: 1280, height: 720 } },
+        function (stream) {
+          var video = document.querySelector('video');
+          video.srcObject = stream;
+          video.onloadedmetadata = function (e) {
+            video.play();
+          };
+        }, function (err) { console.log("error : " + err.name); });
+    } else {
+      video.src = 'somevideo.webm';
+    }
+  </script>
+
+  <script>
+    'use strict';
+
+    var isChannelReady = false;
+    var isInitiator = false;
+    var isStarted = false;
+    var localStream;
+    var pc;
+    var remoteStream;
+    var turnReady;
+
+    var pcConfig = {
+      'iceServers': [{
+        'urls': 'stun:stun.l.google.com:19302'
+      }]
+    };
+
+    var sdpConstraints = {
+      offerToReceiveAudio: true,
+      offerToReceiveVideo: true
+    };
+
+
+
+
+    var room = 'ujin';
+    room = prompt('Enter room name:');
+
+    var socket = io.connect();
+
+    if (room !== '') {
+      socket.emit('create or join', room);
+      console.log('Attempted to create or  join room', room);
+    }
+
+    socket.on('created', function (room) {
+      console.log('Created room ' + room);
+      isInitiator = true;
+    });
+
+    socket.on('full', function (room) {
+      console.log('Room ' + room + ' is full');
+    });
+
+    socket.on('join', function (room) {
+      console.log('Another peer made a request to join room ' + room);
+      console.log('This peer is the initiator of room ' + room + '!');
+      isChannelReady = true;
+    });
+
+    socket.on('joined', function (room) {
+      console.log('joined: ' + room);
+      isChannelReady = true;
+    });
+
+    socket.on('log', function (array) {
+      console.log.apply(console, array);
+    });
+
+
+    function sendMessage(message) {
+      console.log('Client sending message: ', message);
+      socket.emit('message', message);
+    }
+
+    socket.on('message', function (message) {
+      console.log('Client received message:', message);
+      if (message === 'got user media') {
+        maybeStart();
+      } else if (message.type === 'offer') {
+        if (!isInitiator && !isStarted) {
+          maybeStart();
+        }
+        pc.setRemoteDescription(new RTCSessionDescription(message));
+        doAnswer();
+      } else if (message.type === 'answer' && isStarted) {
+        pc.setRemoteDescription(new RTCSessionDescription(message));
+      } else if (message.type === 'candidate' && isStarted) {
+        var candidate = new RTCIceCandidate({
+          sdpMLineIndex: message.label,
+          candidate: message.candidate
+        });
+        pc.addIceCandidate(candidate);
+      } else if (message === 'bye' && isStarted) {
+        handleRemoteHangup();
+      }
+    });
+
+
+    var localVideo = document.querySelector('#localVideo');
+    var remoteVideo = document.querySelector('#remoteVideo');
+    navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true
+    })
+      .then(gotStream)
+      .catch(function (e) {
+        alert('getUserMedia() error: ' + e.name);
+      });
+
+    function gotStream(stream) {
+      console.log('Adding local stream.');
+      localStream = stream;
+      localVideo.srcObject = stream;
+      sendMessage('got user media');
+      if (isInitiator) {
+        maybeStart();
+      }
+    }
+
+    var constraints = {
+      video: true,
+      audio: true
+    };
+
+    console.log('Getting user media with constraints', constraints);
+
+    if (location.hostname !== 'localhost') {
+      requestTurn(
+        'https://computeengineondemand.appspot.com/turn?username=41784574&key=4080218913'
+      );
+    }
+
+    function maybeStart() {
+      console.log('>>>>>>> maybeStart() ', isStarted, localStream, isChannelReady);
+      if (!isStarted && typeof localStream !== 'undefined' && isChannelReady) {
+        console.log('>>>>>> creating peer connection');
+        createPeerConnection();
+        pc.addStream(localStream);
+        isStarted = true;
+        console.log('isInitiator', isInitiator);
+        if (isInitiator) {
+          doCall();
+        }
+      }
+    }
+
+    window.onbeforeunload = function () {
+      sendMessage('bye');
+    };
+
+
+    function createPeerConnection() {
+      try {
+        pc = new RTCPeerConnection(null);
+        pc.onicecandidate = handleIceCandidate;
+        pc.onaddstream = handleRemoteStreamAdded;
+        pc.onremovestream = handleRemoteStreamRemoved;
+        console.log('Created RTCPeerConnnection');
+      } catch (e) {
+        console.log('Failed to create PeerConnection, exception: ' + e.message);
+        alert('Cannot create RTCPeerConnection object.');
+        return;
+      }
+    }
+
+    function handleIceCandidate(event) {
+      console.log('icecandidate event: ', event);
+      if (event.candidate) {
+        sendMessage({
+          type: 'candidate',
+          label: event.candidate.sdpMLineIndex,
+          id: event.candidate.sdpMid,
+          candidate: event.candidate.candidate
+        });
+      } else {
+        console.log('End of candidates.');
+      }
+    }
+
+    function handleCreateOfferError(event) {
+      console.log('createOffer() error: ', event);
+    }
+
+    function doCall() {
+      console.log('Sending offer to peer');
+      pc.createOffer(setLocalAndSendMessage, handleCreateOfferError);
+    }
+
+    function doAnswer() {
+      console.log('Sending answer to peer.');
+      pc.createAnswer().then(
+        setLocalAndSendMessage,
+        onCreateSessionDescriptionError
+      );
+    }
+
+    function setLocalAndSendMessage(sessionDescription) {
+      pc.setLocalDescription(sessionDescription);
+      console.log('setLocalAndSendMessage sending message', sessionDescription);
+      sendMessage(sessionDescription);
+    }
+
+    function onCreateSessionDescriptionError(error) {
+      trace('Failed to create session description: ' + error.toString());
+    }
+
+    function requestTurn(turnURL) {
+      var turnExists = false;
+      for (var i in pcConfig.iceServers) {
+        if (pcConfig.iceServers[i].urls.substr(0, 5) === 'turn:') {
+          turnExists = true;
+          turnReady = true;
+          break;
+        }
+      }
+      if (!turnExists) {
+        console.log('Getting TURN server from ', turnURL);
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            var turnServer = JSON.parse(xhr.responseText);
+            console.log('Got TURN server: ', turnServer);
+            pcConfig.iceServers.push({
+              'urls': 'turn:' + turnServer.username + '@' + turnServer.turn,
+              'credential': turnServer.password
+            });
+            turnReady = true;
+          }
+        };
+        xhr.open('GET', turnURL, true);
+        xhr.send();
+      }
+    }
+
+    function handleRemoteStreamAdded(event) {
+      console.log('Remote stream added.');
+      remoteStream = event.stream;
+      remoteVideo.srcObject = remoteStream;
+    }
+
+    function handleRemoteStreamRemoved(event) {
+      console.log('Remote stream removed. Event: ', event);
+    }
+
+    function hangup() {
+      console.log('Hanging up.');
+      stop();
+      sendMessage('bye');
+    }
+
+    function handleRemoteHangup() {
+      console.log('Session terminated.');
+      stop();
+      isInitiator = false;
+    }
+
+    function stop() {
+      isStarted = false;
+      pc.close();
+      pc = null;
+    }
+
+
+    ///////////////////////////////////////////
+
+
+const startButton = document.getElementById('startButton');
+const callButton = document.getElementById('callButton');
+const hangupButton = document.getElementById('hangupButton');
+
+// Set up initial action buttons status: disable call and hangup.
+callButton.disabled = true;
+hangupButton.disabled = true;
+
+
+// Handles start button action: creates local MediaStream.
+function startAction() {
+  startButton.disabled = true;
+  navigator.mediaDevices.getUserMedia(mediaStreamConstraints)
+    .then(gotLocalMediaStream).catch(handleLocalMediaStreamError);
+  trace('Requesting local stream.');
+}
+
+// Handles call button action: creates peer connection.
+function callAction() {
+  callButton.disabled = true;
+  hangupButton.disabled = false;
+
+  trace('Starting call.');
+  startTime = window.performance.now();
+
+  // Get local media stream tracks.
+  const videoTracks = localStream.getVideoTracks();
+  const audioTracks = localStream.getAudioTracks();
+  if (videoTracks.length > 0) {
+    trace(`Using video device: ${videoTracks[0].label}.`);
+  }
+  if (audioTracks.length > 0) {
+    trace(`Using audio device: ${audioTracks[0].label}.`);
+  }
+
+  const servers = null;  // Allows for RTC server configuration.
+
+  // Create peer connections and add behavior.
+  localPeerConnection = new RTCPeerConnection(servers);
+  trace('Created local peer connection object localPeerConnection.');
+
+  localPeerConnection.addEventListener('icecandidate', handleConnection);
+  localPeerConnection.addEventListener(
+    'iceconnectionstatechange', handleConnectionChange);
+
+  remotePeerConnection = new RTCPeerConnection(servers);
+  trace('Created remote peer connection object remotePeerConnection.');
+
+  remotePeerConnection.addEventListener('icecandidate', handleConnection);
+  remotePeerConnection.addEventListener(
+    'iceconnectionstatechange', handleConnectionChange);
+  remotePeerConnection.addEventListener('addstream', gotRemoteMediaStream);
+
+  // Add local stream to connection and create offer to connect.
+  localPeerConnection.addStream(localStream);
+  trace('Added local stream to localPeerConnection.');
+
+  trace('localPeerConnection createOffer start.');
+  localPeerConnection.createOffer(offerOptions)
+    .then(createdOffer).catch(setSessionDescriptionError);
+}
+
+// Handles hangup action: ends up call, closes connections and resets peers.
+function hangupAction() {
+  localPeerConnection.close();
+  remotePeerConnection.close();
+  localPeerConnection = null;
+  remotePeerConnection = null;
+  hangupButton.disabled = true;
+  callButton.disabled = false;
+  trace('Ending call.');
+}
+
+// Add click event handlers for buttons.
+startButton.addEventListener('click', startAction);
+callButton.addEventListener('click', callAction);
+hangupButton.addEventListener('click', hangupAction);
+
+
+
+  </script>
+
+
+
+</body>
+
+
+</html>

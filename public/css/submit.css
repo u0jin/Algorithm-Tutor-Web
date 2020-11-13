@@ -66,8 +66,8 @@ Style Attribute {
 
 
 textarea{
-	width:600px; 
-	height:600px; 
+	width:1000px; 
+	height:1000px; 
     resize:none;/* 크기고정 */ 
 /*   resize: horizontal; // 가로크기만 조절가능 
 	resize: vertical;  세로크기만 조절가능  */
@@ -85,6 +85,7 @@ textarea{
     background-color: #FFFFFF;
     color: black;
 }
+
 
 
 .text-center {

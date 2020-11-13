@@ -5,13 +5,17 @@ var nodeStatic = require('node-static');
 var http = require('http');
 var socketIO = require('socket.io');
 
-
+const path = require('path');
 const express = require("express");
 var app = express();
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var fs = require("fs");  // 파일 열기 위한 모듈
 //var engines = require('consolidate');
+const cors = require('cors'); 
+app.use(cors());
+app.use(bodyParser.json());
+
 
 
 
@@ -38,7 +42,6 @@ var server = app.listen(3000, () => {
 
 app.use(express.static('public'));
 
-app.use(bodyParser.json());
 app.use(bodyParser.text());
 app.use(bodyParser.urlencoded());
 app.use(session({
