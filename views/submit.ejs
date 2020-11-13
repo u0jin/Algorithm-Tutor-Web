@@ -163,12 +163,9 @@
                 return response.json();
             })
             .then(function(myJson){
-                  const score = document.querySelector("#score");
-                 const ul = document.querySelector("#result");
-
-               //const p = document.createElement("p");
+               const score = document.querySelector("#score");
+               const ul = document.querySelector("#result");
                score.innerText =  myJson['score'];
-                //score.append(p)
 
                  for(let i=0;i<myJson['case'].length;i++){
                     const li = document.createElement("li");
