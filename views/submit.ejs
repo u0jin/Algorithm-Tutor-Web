@@ -10,14 +10,13 @@
       <style>
          #btn_home {
          position: relative;
-         top: -30%;
+         top: 0%;
          left: 670px;
          }
          #btn_submit {
          position: relative;
          top: 0%;
          left: 400px;
-         background: rgb(228, 169, 193);
          clear: right
          }
          #upleft {
@@ -25,14 +24,14 @@
          height: 658px;
          float: left;
          overflow-y: scroll;
-         background-color: #263747;
-         color: #B2C0CC;
+         background-color: #F1F4F7;
+         color: #263747;
          }
          #upright {
          width: 50%;
          height: 458px;
          float: right;
-         background-color: #263747;
+         background-color: #F1F4F7;
          color: #B2C0CC;
          }
          #below.result {
@@ -42,7 +41,7 @@
          top: 10%;
          left: 50%;
          clear: right;
-         background-color: #263747;
+         background-color: #F1F4F7;
          color: #B2C0CC;
          }
 
@@ -52,7 +51,7 @@
          bottom: 0;
          width: 100%;
          height: 9%;
-         background-color: #263747;
+         background-color: #F1F4F7;
          color: #B2C0CC;
          }
       </style>
@@ -63,29 +62,31 @@
          <fieldset>
             <%= "문제"+index['index'] + '번' %>
             <h2 class='text-center font-weight-bold mb-2'><%= index['title']%></h2>
+            <a class="navbar-brand font-weight-bold" href="/" id="btn_home">HOME</a> 
+
          </fieldset>
          <main role="main">
-            <div class='card mb-2' style="background-color: #263747;">
+            <div class='card mb-2'>
                <div class='card-header'><strong>문제 설명</strong></div>
                <div id='pro1' class='card-body'>
                  <%= index['description'] %>
                </div>
             </div>
-            <div class='card mb-2' style="background-color: #263747;">
+            <div class='card mb-2'>
                <div class='card-header'><strong>입력</strong></div>
                <div id='pro2' class='card-body'><%= index['input'] %> <br />
                   <br />
                   <br />
                </div>
             </div>
-            <div class='card mb-2' style="background-color: #263747;">
+            <div class='card mb-2' >
                <div class='card-header'><strong>출력</strong></div>
                <div id='pro3' class='card-body'><%= index['output'] %> <br />
                   <br />
                   <br />
                </div>
             </div>
-            <div class='card mb-2' style="background-color: #263747;">
+            <div class='card mb-2'>
                <div class='card-header'><strong>입력 예시</strong>&nbsp;&nbsp;&nbsp;<button id='copybtn'
                   class='btn btn-outline-primary btn-sm copybtn' data-clipboard-target='#sinput'
                   data-toggle='tooltip' title='예시를 복사하여 붙여넣을 수 있습니다.'>예시 복사</button></div>
@@ -95,7 +96,7 @@
                   </p>
                </div>
             </div>
-            <div class='card mb-2' style="background-color: #263747;">
+            <div class='card mb-2'>
             <div class='card-header'><strong>출력 예시</strong></div>
             <div class='card-body'>
                <p><samp class='sampledata'><%= index['output_example'] %>
@@ -106,28 +107,27 @@
       <!-- TODO: 언어 제대로 입력받는지 확인할것 -->
       <form id="upright" method="POST">
          <br />
-         &nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="초기화"    style="background-color: #44576C;      border-color: #37485D;">
+         &nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="초기화"    style="background-color: #44576C;  color: white;    border-color: #44576C;">
          &nbsp;&nbsp;
-         <select id="language" name="language" style="background-color: #44576C;  border-color: #37485D;">
+         <select id="language" name="language" style="background-color: #44576C;  border-color: #44576C; color: white;">
             <option value=0 selected>C</option>
             <option value=1>C++</option>
             <option value=3>Java</option>
             <option value=6>Python</option>
          </select>
-         &nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="소스 제출" id="btn_submit" style="background-color: #44576C;  border-color: #37485D; border-color: #37485D;">
+         &nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="소스 제출" id="btn_submit" style="background-color: #44576C;  color: white; border-color: #44576C;">
          <br />
          <br />
          &nbsp;&nbsp;
-         <textarea name="content" cols="100" rows="15" style="overflow-y:scroll; background-color: #263747; resize: none;"></textarea>
+         <textarea name="content" cols="100" rows="15" style="overflow-y:scroll; resize: none;"></textarea>
          <input type="hidden" name="index" value="<%= index["index"] %>" >
       </form>
       <!-- 결과 받는곳-->
 
-      <div id="below" style="background-color: #44576C;">
-         <ul id="testcase"></ul>
-         <p id = "result" ></p>
-         <p id = "score" ></p>
-         <a class="navbar-brand font-weight-bold" href="/" id="btn_home">HOME</a> </a>
+      <div id="below">
+         &nbsp;&nbsp;<ul id="testcase" cols="10" rows="15" ></ul>
+         &nbsp;&nbsp;<p id = "result" ></p>
+         &nbsp;&nbsp;<p id = "score" ></p>
       </div>
 
 
