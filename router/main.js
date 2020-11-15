@@ -7,7 +7,8 @@ module.exports = function (app, fs) {
     app.get("/", function (req, res) {  //main page
         res.render('index', {
             length: 3,
-            problem: ["A+B", "두 수 비교하기", "수 정렬하기"]
+            problem: ["A+B", "두 수 비교하기", "수 정렬하기"],
+            difficulty: ["하","하","중"]
         });
         //res.sendFile(path.resolve(__dirname, "index.html"))
     });
@@ -114,6 +115,7 @@ module.exports = function (app, fs) {
 
         if (result != "compile fail") {  // 컴파일을 성공한다면, 정답 체크 ㄱㄱ
             var scorelist = new Array();
+
             var i = 0;
             var score = 0; // 점수 합산
             
@@ -134,6 +136,7 @@ module.exports = function (app, fs) {
                     const Judgestdout = execSync(Judge_script).toString();
                     const user_output = fs.readFileSync(`/home/ujin/Desktop/final/Algorithm-Tutor-Web/tester/result_src.txt`, 'utf8').toString();  // user 의 소스 결과값 불러옴        
                     const Judgetatus = JSON.parse(Judgestdout);
+
                     console.log(Judgetatus);
                     console.log( i + src_output);
                     console.log( i+ user_output);
@@ -150,8 +153,12 @@ module.exports = function (app, fs) {
                     }
 
                     console.log(result);
+                    console.log(user_output);
 
-                    scorelist.push(i + "번 결과 : " + result);
+
+
+
+                    scorelist.push(i + "번 결과 : " + result + "("+ " real_time : "+  Judgetatus['real_time'] + " / " +" memory : " + Judgetatus['memory'] +")"+'\n' + " 출력값 : "+ user_output );
 
                 } catch (exception) {  // 컴파일 실패
                     const stdout = exception.stderr.toString();

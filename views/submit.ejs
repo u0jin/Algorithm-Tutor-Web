@@ -37,17 +37,17 @@
          background-color: #F1F4F7;
          color: #B2C0CC;
       }
-
-      #below.result {
-         height: 200px;
+      #below {
          width: 50%;
-         position: relative;
-         top: 10%;
-         left: 50%;
-         clear: right;
-         background-color: #F1F4F7;
-         color: #B2C0CC;
+         height: 200px;
+         float: right;
+         background-color: #fff;
+         color: #263747;
+         overflow-y: scroll;
+
       }
+
+
 
 
       #container #footer {
@@ -118,7 +118,7 @@
    <!-- TODO: 언어 제대로 입력받는지 확인할것 -->
    <form id="upright" method="POST">
       <br />
-      &nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="초기화"
+      &nbsp;&nbsp;&nbsp;&nbsp;<input type="reset" value="초기화"
          style="background-color: #44576C;  color: white;    border-color: #44576C;">
       &nbsp;&nbsp;
       <select id="language" name="language" style="background-color: #44576C;  border-color: #44576C; color: white;">
@@ -135,13 +135,18 @@
       <textarea name="content" cols="100" rows="15" style="overflow-y:scroll; resize: none;"></textarea>
       <input type="hidden" name="index" value="<%= index["index"] %>">
    </form>
-   <!-- 결과 받는곳-->
 
-   <div id="below">
-      &nbsp;&nbsp;<ul id="testcase" cols="10" rows="15"></ul>
-      &nbsp;&nbsp;<p id="result"></p>
-      &nbsp;&nbsp;<p id="score"></p>
-   </div>
+
+   <!-- 결과 받는곳-->
+   <form id="below">
+      <input type="reset" value="clear"  onClick="window.location.reload()" 
+      style="background-color: #44576C;  color: white;    border-color: #44576C;">
+
+      <ul id="testcase"></ul>
+      <p id="result"></p>
+      <p id="score"></p>
+   </form>
+ 
 
 
 
@@ -193,10 +198,10 @@
             })
             .then(function (myJson) {
                const result = document.querySelector("#result");
-               result.innerText = myJson['result'];
+               result.innerText = "컴파일 결과 : "+ myJson['result'];
 
                const score = document.querySelector("#score");
-               score.innerText = myJson['score'];
+               score.innerText = "점수 : "+myJson['score'];
 
                const ul = document.querySelector("#testcase");
 
