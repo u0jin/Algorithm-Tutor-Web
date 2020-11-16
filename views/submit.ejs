@@ -6,6 +6,7 @@
    <meta name="viewport" content="width=device-width, height=device-height, 
          minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0">
    <title>SO EASY</title>
+
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" />
    <style>
       #btn_home {
@@ -96,9 +97,8 @@
             </div>
          </div>
          <div class='card mb-2'>
-            <div class='card-header'><strong>입력 예시</strong>&nbsp;&nbsp;&nbsp;<button id='copybtn'
-                  class='btn btn-outline-primary btn-sm copybtn' data-clipboard-target='#sinput' data-toggle='tooltip'
-                  title='예시를 복사하여 붙여넣을 수 있습니다.'>예시 복사</button></div>
+            <div class='card-header'><strong>입력 예시</strong>
+         </div>
             <div class='card-body'>
                <p id=sinput><samp class='sampledata'>
                      <p id="input_example"><%= index['input_example'] %></p>
@@ -139,7 +139,7 @@
 
    <!-- 결과 받는곳-->
    <form id="below">
-      <input type="reset" value="clear"  onClick="window.location.reload()" 
+      <input type="button" id ="clear" value="clear"  onClick="window.location.reload()" 
       style="background-color: #44576C;  color: white;    border-color: #44576C;">
 
       <ul id="testcase"></ul>
